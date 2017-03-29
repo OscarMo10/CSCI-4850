@@ -1,0 +1,410 @@
+Name: Oscar Montoya
+
+
+/******* Create tables and populate them with data ******/
+
+create table if not exists `person` (`id` int auto_increment, `first_name` varchar(30) not null, `last_name` varchar(30) not null, `street` varchar(100) not null, `city` varchar(50) not null, `state` varchar(50) not null, `zip` varchar(5) not null, `email` varchar(80) not null UNIQUE, primary key(`id`));
+
+
+create table if not exists `person_phoneNumber` (`person_id` int not null, `phone_number` varchar(12) not null, primary key(`person_id`, `phone_number`));
+
+create table  if not exists `customer` (`id` int not null, `is_prime` boolean not null, `dob` date not null, primary key(`id`)); 
+
+create table if not exists `fulfiller` (`id` int not null, `date_joined` date not null, `membership_type` enum('gold', 'silver', 'bronze') not null, primary key(`id`));
+
+create table if not exists `review` (`id` int auto_increment, `customer_id` int not null, `product_id` int not null, `score` int not null, `date_reviewed` datetime not null, primary key(`id`));
+
+create table if not exists `product_info` (`product_id` int, `name` varchar(100) not null, `description` varchar(300) not null, primary key(`product_id`));
+
+create table if not exists `item` (`id` int, `product_id` int not null, `business_id` int not null, `price` numeric(10,2) not null, `item_condition` enum('new', 'used') not null, `shipping_cost` numeric(10,2) not null, primary key(`id`));
+
+create table if not exists `purchase` (`item_id` int not null, `customer_id` int not null, `time_purchased` datetime not null, `status` varchar(10), primary key(`item_id`));
+
+create table if not exists `business` (`id` int auto_increment, `fulfiller_id` int not null, `name` varchar(100) not null, `street` varchar(100) not null, `city` varchar(50) not null, `state` varchar(50) not null, `zip` varchar(5) not null, `email` varchar(100) not null, primary key(`id`));
+
+create table if not exists `business_phoneNumber` (`business_id` int not null, `phone_number`  char(12) not null, primary key(`business_id`, `phone_number`));
+
+create table if not exists `category` (`name` varchar(100), `adult_only` boolean not null, primary key(`name`));
+
+create table if not exists `product_category` (`product_id` int not null, `category_name` varchar(100) not null, primary key(`product_id`, `category_name`));
+
+
+ALTER TABLE `business` ADD UNIQUE (`fulfiller_id`, `name`);
+
+alter table `person_phoneNumber` add foreign key (`person_id`) references `person` (`id`) on delete cascade on update cascade;
+
+alter table `customer` add foreign key (`id`) references `person` (`id`) on delete cascade on update cascade;
+
+alter table `fulfiller` add foreign key (`id`) references `person` (`id`) on delete cascade on update cascade;
+
+alter table `review` add foreign key (`id`) references `customer` (`id`) on delete cascade on update cascade;
+
+alter table `review` add foreign key (`product_id`) references `product_info` (`product_id`) on delete cascade on update cascade;
+
+alter table `item` add foreign key (`product_id`) references `product_info` (`product_id`) on delete cascade on update cascade;
+
+alter table `item` add foreign key (`business_id`) references `business` (`id`) on delete cascade on update cascade;
+
+alter table `purchase` add foreign key (`item_id`) references `item` (`id`) on delete cascade on update cascade;
+
+alter table `purchase` add foreign key (`customer_id`) references `customer` (`id`) on delete cascade on update cascade;
+
+alter table `business` add foreign key (`fulfiller_id`) references `fulfiller` (`id`) on delete cascade on update cascade;
+
+alter table `business_phoneNumber` add foreign key (`business_id`) references `business` (`id`) on delete cascade on update cascade;
+
+alter table `product_category` add foreign key (`product_id`) references `product_info` (`product_id`) on delete cascade on update cascade;
+
+alter table `product_category` add foreign key (`category_name`) references `category` (`name`) on delete cascade on update cascade;
+
+INSERT INTO `PERSON` (`id`, `first_name`, `last_name`, `street`, `city`, `state`, `zip`, `email` ) VALUES (1, 'Tonya', 'Vanorden', '188 Valley Farms Ave. ', 'Saugus', 'MA', '01906', 'TonVan@gmail.com'), (2, 'Henriette', 'Mallette', '901 N. 3rd St. ', 'Prattville', 'AL', '36067', 'HenMal@gmail.com'), (3, 'Pete', 'Sauve', '91 Lilac Circle ', 'Cuyahoga Falls', 'OH', '44221', 'PetSau@gmail.com'), (4, 'Armand', 'Locascio', '7596 Brickyard Ave. ', 'Bethesda', 'MD', '20814', 'ArmLoc@gmail.com'), (5, 'Bridgette', 'Guzik', '55 Bayberry Street ', 'Macon', 'GA', '31204', 'BriGuz@gmail.com'), (6, 'Rhonda', 'Aberle', '26 North Parker Rd. ', 'Grosse Pointe', 'MI', '48236', 'RhoAbe@gmail.com'), (7, 'Stuart', 'Mcmurtrie', '49 High Noon St. ', 'Riverside', 'NJ', '08075', 'StuMcm@gmail.com'), (8, 'Cristy', 'Cavalieri', '603 Sheffield Lane ', 'Matthews', 'NC', '28104', 'CriCav@gmail.com'), (9, 'Ying', 'Edgell', '78 Grove Drive ', 'Santa Clara', 'CA', '95050', 'YinEdg@gmail.com'), (10, 'Felice', 'Hess', '61 North Vale Court ', 'Windermere', 'FL', '34786', 'FelHes@gmail.com'), (11, 'Leticia', 'Arvie', '530 Pleasant Lane ', 'Rockledge', 'FL', '32955', 'LetArv@gmail.com'), (12, 'Edmond', 'Lyvers', '84 South Randall Mill Drive ', 'Dacula', 'GA', '30019', 'EdmLyv@gmail.com'), (13, 'Debra', 'Barber', '917 53rd Road ', 'Drexel Hill', 'PA', '19026', 'DebBar@gmail.com'), (14, 'Gladis', 'Jansson', '9313 Vernon Ave. ', 'Northbrook', 'IL', '60062', 'GlaJan@gmail.com'), (15, 'Terica', 'Shultz', '238 Valley St. ', 'Saint Augustine', 'FL', '32084', 'TerShu@gmail.com'), (16, 'Angelina', 'Danforth', '703 Plumb Branch Circle ', 'Dundalk', 'MD', '21222', 'AngDan@gmail.com'), (17, 'Gigi', 'Majeed', '31 East Rockledge Street ', 'Pittsburgh', 'PA', '15206', 'GigMaj@gmail.com'), (18, 'Cherise', 'Kolar', '776 Cedarwood Drive ', 'Salem', 'MA', '01970', 'CheKol@gmail.com'), (19, 'Nicky', 'Masse', '9671 Bear Hill Road ', 'Madisonville', 'KY', '42431', 'NicMas@gmail.com') ;
+
+
+INSERT INTO `person_phoneNumber` (`person_id`, `phone_number`) VALUES (1, '(154)223-9249'), (2, '(216)668-7000'), (2, '(860)178-3643'), (3, '(464)945-9214'), (4, '(608)610-8866'), (4, '(188)406-3872'), (5, '(575)624-1110'), (5, '(092)748-1769'), (6, '(814)167-5910'), (6, '(934)336-1272'), (7, '(413)051-6104'), (8, '(823)175-5744'), (9, '(571)595-2240'), (9, '(416)837-1180'), (10, '(680)746-1120'), (11, '(130)563-8365'), (12, '(170)903-8503'), (13, '(850)847-9287'), (14, '(655)524-4509'), (15, '(000)002-7499'), (16, '(332)248-7287'), (17, '(600)885-2262'), (18, '(800)649-5269'), (19, '(285)444-5915'), (19, '(192)602-0781') ;
+
+
+INSERT INTO `customer` (`id`, `is_prime`, `dob`) VALUES  (1, false, '1950-10-20'), (2, false, '1987-08-28'), (3, true, '1985-09-17'), (4, false, '2005-09-18'), (5, false, '1990-06-24'), (6, true, '1942-03-26'), (7, false, '1947-05-14'), (8, false, '2006-07-19'), (9, true, '1947-07-15'), (10, false, '1962-11-22'), (11, false, '1965-03-03'), (12, true, '2005-06-30'), (13, false, '1947-03-08'), (14, false, '1983-10-28');
+
+
+INSERT INTO `fulfiller` (`id`, `date_joined`, `membership_type`) VALUES (15, '2011-08-31', 'gold'), (16, '2006-10-03', 'silver'), (17, '2014-01-30', 'bronze'), (18, '2004-10-08', 'gold'), (19, '2012-03-10', 'silver');
+
+
+INSERT INTO `business` (`id`, `fulfiller_id`, `name`, `street`, `city`, `state`, `zip`, `email`) VALUES (1, 16, 'A.G. Edwards Inc.', '208 Bayport St. ', 'Raeford', 'NC', '28376', 'A.G.@gmail.com'), (2, 16, 'Abbott Laboratories', '369 Orchard Ave. ', 'Schenectady', 'NY', '12302', 'Abbott@gmail.com'), (3, 17, 'Abercrombie & Fitch Co.', '32 Front Dr. ', 'West Springfield', 'MA', '01089', 'Abercrombie@gmail.com'), (4, 18, 'ABM Industries Incorporated', '93 St Paul St. ', 'Fairmont', 'WV', '26554', 'ABM@gmail.com'), (5, 18, 'Ace Hardware Corporation', '652 Creek Dr. ', 'Upland', 'CA', '91784', 'Ace@gmail.com'), (6, 19, 'ACT Manufacturing Inc.', '718 10th St. ', 'Brookline', 'MA', '02446', 'ACT@gmail.com');
+
+INSERT INTO `business_phoneNumber` VALUES (1, '(402)404-2329'), (1, '(239)323-3234'), (2, '(302)323-4324'), (3, '(809)233-2345'), (4, '(323)432-4348'), (5, '(409)342-4345'), (6, '(434)434-2433');
+
+INSERT INTO `product_info` (`product_id`, `name`, `description`) VALUES (100, 'Playstation 4', 'Next generation console.'), (101, 'Tyson Portable Grill', 'Small portable charcoal grill.'), (102, 'Laser Gaming Mouse', '1000 dpi gaming mouse.'), (103, 'LzyBoy Reclining Chair', 'The most comfortable recliner available.'), (104, 'Code Complete', 'The coding reference book.'), (105, 'Flower Pot', 'Small ceramic pot.'), (106, 'Vizio 26 inch television', '1080p hi def television'), (107, 'Flamy Tabacco Pipe', 'Enjoy a smoke with our wooden pipe.'), (108, 'Craftsman Rake', 'Durable rake with lifetime replacement guarantee'), (109, 'Hot Wheel 1954 Mustang Shevy', 'Relive the classic mustang with this collectors edition'), (110, 'EasyLiving Student Desk (Black)', 'Black stylish desk with pullout drawer'), (111, 'MacBook Pro', '2016 edition MacBook Pro with 16 gb of ram.');
+
+
+INSERT INTO `item` (`id`, `product_id`, `business_id`, `price`, `item_condition`, `shipping_cost`) VALUES (1, 100, 1, 150.00, 'new', 9.99), (2, 100, 1, 125.00, 'used', 9.99), (3, 101, 2, 45.00, 'new', 4.99), (4, 102, 3, 89.00, 'new', 5.99), (5, 102, 4, 74.00, 'new', 1.99), (6, 103, 4, 199.00, 'new', 0.00), (7, 104, 5, 23.00, 'used', 0.00), (8, 105, 5, 67.50, 'new', 10.00), (9, 106, 5, 200.00, 'new', 4.99), (10, 107, 1, 15.00, 'new', 2.99), (11, 106, 1, 110.50, 'used', 0.00), (12, 107, 5, 45.00, 'new', 4.99), (13, 109, 4, 59.00, 'new', 0.00), (14, 110, 4, 115.84, 'old', 1.99), (15, 110, 2, 160.00, 'new', 0.00), (16, 100, 2, 120.00, 'new', 4.99), (17, 108, 4, 14.99, 'new', 2.99), (18, 110, 3, 140.00, 'new', 4.99);
+
+INSERT INTO `category` (`name`, `adult_only`) VALUES ('Home Decor', 'false'), ('Electronics', false), ('Gaming', false), ('Furniture', false), ('Books', false), ('Computer & Technology', false), ('Computer Accessories', false), ('Patio, Lawn & Garden', false), ('Outdoor Grills', false), ('Televisions', false), ('Tabacco Pipes & Accessories', true), ('Computer Mouse', false), ('Guns', true);
+
+INSERT INTO `product_category` (`product_id`, `category_name`) VALUES (100, 'Electronics'), (100, 'Gaming'), (101, 'Patio, Lawn & Garden'), (101, 'Outdoor Grills'), (102, 'Gaming'), (103, 'Computer Accessories'), (103, 'Furniture'), (104, 'Books'), (104, 'Computer & Technology'), (105, 'Patio, Lawn & Garden'), (106, 'Electronics'), (106, 'Televisions'), (107, 'Tabacco Pipes & Accessories'), (102, 'Computer Mouse');
+
+INSERT INTO `purchase` (`item_id`, `customer_id`, `time_purchased`, `status`) VALUES (1, 1, '2005-01-20 12:30:48', 'delivered'), (2, 2, '2017-03-27 11:00:28', 'processing'), (3, 2, '2017-03-10 12:00:43', 'shipped'), (4, 3, '2016-05-10 14:12:10', 'delivered'), (5, 4, '2016-01-10 08:10:12', 'delivered'), (6, 2, '2016-06-20 07:03:10', 'delivered'), (7, 4, '2017-03-01 08:10:23', 'processing'), (8, 4, '2017-03-24 10:20:20', 'processing');
+
+INSERT INTO `review` (`id`, `customer_id`, `product_id`, `score`, `date_reviewed`) VALUES (1, 1, 100, 2, '2006-02-10 10:00:50'), (2, 3, 102, 5, '2016-05-15 12:00:20'), (3, 4, 102, 1, '2016-01-16 10:00:39'), (4, 2, 100, 5,'2016-07-10 05:20:10');
+
+/************************ Testing Foreign Key Constraints *********************/
+
+/* Attempt to insert tuple into person with non-unique email
+/* Result: Fails due to unique constraint on 'email'
+
+INSERT INTO `person` (`first_name`, `last_name`, `street`, `city`, `state`, `zip`, `email`)
+VALUES ('Jamie', 'Janden', '198 Valley Farms Ave. ', 'Pablo', 'MA', '01908', 'TonVan@gmail.com'); 
+
+/* insert duplicate `item_id` into table 'purchase'. 
+/* Result: not successfull due to due to primary key contraint on `item_id`
+
+INSERT INTO `purchase`
+VALUES (1, 2, '2016-10-20 02:20:20', 'processing');
+
+
+/* Testing Unique Constraint (`fulfiller_id`, `name`) on table `business`
+/* Fails: Duplicate entry
+
+INSERT INTO `business` (`fulfiller_id`, `name`, `street`, `city`, `state`, `zip`, `email`)
+VALUES (16, 'A.G. Edwards Inc.', 'Wilson Cir', 'Omaha', 'NE', '68493', 'omad@gmail.com');
+
+
+/* Testing Foreign Key Constraint (`id`) on table `fulfiller`
+/* Result: Fails due to foreign key constraint
+
+INSERT INTO `fulfiller` VALUES (89, '2014-10-10', 'gold');
+
+/* Testing the Foreign Key Constraint ('id') on table 'customer'
+/* Result: Fails due to foreign key constraint
+
+INSERT INTO `customer` VALUES (90, true, '1960-03-20');
+
+
+/* Testing the Foreign key constraint (`business_id`) on table `business_phoneNumber`
+/* Result: Fails due to foreign key constraint
+
+INSERT INTO `business_phoneNumber` VALUES (90, '(402)434-3455');
+
+
+/* Testing the forign key constraint (`product_id`) on table `item`
+/* Result: Fails due to foreign key constraint
+
+INSERT INTO `item` (`id`, `product_id`, `business_id`, `price`, `item_condition`, `shipping_cost`) VALUES (19, 200, 1, 28.00, 'new', 9.00);
+
+
+/******************* Queries **********************/
+
+/* Query retrieves (`id`, `is_prime`, and `dob`) for all
+/* customer that are under 18. Filters tuples in `customer` table
+/* using the predicate.
+/* Returns 3 rows
+
+SELECT *
+FROM `customer`
+WHERE `dob` > DATE_SUB(CURDATE(), INTERVAL 18 YEAR);
+
+/* Query retrieves the phone number of person with email 'TonVan@gmailcom'
+/* Returns 1 row 
+
+SELECT `phone_number`
+FROM `person` INNER JOIN `person_phoneNumber`
+ON `person`.`id` = `person_phoneNumber`.`person_id`
+where `email` = 'TonVan@gmail.com';
+
+/* Query retrieves the id, first_name, and last name
+/* of all customer from Florida
+/* Return 2 rows
+
+SELECT `id`, `first_name`, `last_name`
+FROM `customer` NATURAL JOIN `person`
+WHERE `state` = 'FL';
+
+/* Query retrieves the customer id and number of reviews the
+/* customer has made 
+/* Return 14 rows
+
+SELECT `customer`.`id`, COUNT(`review`.`id`) AS `num_of_reviews`
+FROM `review` RIGHT OUTER JOIN `customer`
+ON `review`.`customer_id` = `customer`.`id`
+GROUP BY `customer`.`id`;;
+
+
+/* Query returns phone numbers of business with name 'A.G. Edwards Inc.'
+/* Return 2 rows
+
+SELECT `phone_number`
+FROM `business` LEFT OUTER JOIN `business_phoneNumber`
+ON `business`.`id` = `business_phoneNumber`.`business_id`
+WHERE `business`.`name` = 'A.G. Edwards Inc.';
+
+
+/* Query returns the name, price, condition (new, used),
+/* and shipping cost of all items that have ever been listed
+/* that belong to the category 'Electronics'
+/* Returns 5 rows
+
+SELECT `name`, `price`, `item_condition`, `shipping_cost`
+FROM `product_info` natural join `product_category` natural join `item`
+WHERE `category_name` = 'Electronics';
+
+
+/* Return the name of all the categories that are appropriate for
+/* customer under 18.
+/* Return 11 rows
+
+SELECT DISTINCT `name`
+FROM `category`
+WHERE `name` NOT IN
+(SELECT `name`
+FROM `category`
+where `adult_only` = true);
+
+
+/* Query returns items with description containing 'mouse' or that belongs
+/* to category containing 'mouse'
+/* Return the name, price, item condition (new, used), and shipping
+/* cost of items that meet one of the following conditions:
+/* 1. The description of the item contains the word mouse
+/* 2. The item belongs to a category that contains the word mouse
+/* Return 2 rows
+
+SELECT `name`, `price`, `item_condition`, `shipping_cost`
+from `product_info` natural join `item`
+where `description` LIKE '%mouse%'
+UNION
+SELECT `name`, `price`, `item_condition`, `shipping_cost`
+from `item` natural join `product_category` natural join `product_info`
+where `category_name` like '%mouse%';
+
+/* Return the total amount spent by the customer
+/* with the email address 'HenMal@gmail.com'
+/* Return 1 row with value 369.00
+
+SELECT SUM(`price`) as `total_spent`
+from (`purchase` INNER JOIN `item` ON `item`.`id` = `purchase`.`item_id`) INNER JOIN (`person` INNER JOIN `customer` ON `person`.`id` = `customer`.`id`) ON `person`.`id` = `purchase`.`customer_id` WHERE `person`.`email` =  'HenMal@gmail.com';
+
+/* Return the name of the business and how many items
+/* that business has ever listed.
+/* Return 6 rows
+
+SELECT `business`.`name`, COUNT(`item`.`id`)
+FROM `item` RIGHT JOIN `business` ON `item`.`business_id` = `business`.`id`
+GROUP BY `business`.`name`;
+
+
+/* Query return the name of the business and the number of items
+/* that business has sold
+/* Return 6 rows
+
+SELECT `name`, COUNT(`purchase`.`item_id`)
+FROM (`purchase` INNER JOIN `item` ON `item`.`id` = `purchase`.`item_id`) RIGHT OUTER JOIN
+`business` ON `business`.`id` = `item`.`business_id`
+GROUP BY `name`;
+
+/* Query return the name of a product and its avg rating
+/* Result are order by their score in descending order
+/* Return 2 rows
+
+SELECT `name`, AVG(`score`)
+FROM `product_info`, `review`
+WHERE `product_info`.`product_id` = `review`.`product_id`
+GROUP BY `name`
+ORDER BY AVG(`score`) DESC;
+
+// update status of purchase from processing to delivered
+/* Updates status of purchase for item with id = 2
+/* to 'delivered'
+/* Result: Successfully updates
+
+UPDATE `purchase`
+SET `status` = 'delivered'
+where `item_id` = 2;
+
+
+
+/* Query retrieves all the items that have been listed but
+/* not yet sold. Each tuple has the item id, item name, item description,
+/* item condition (new, used), and shipping cost.
+/* Result: Return 10 rows
+
+SELECT `id`, `name`, `description`, `item_condition`, `shipping_cost`
+FROM `item` NATURAL JOIN `product_info`
+WHERE `item`.`id` NOT IN (SELECT `item_id` FROM `purchase`);
+
+// Query return all categories not appropriate for minors
+// Return 2 rows
+
+SELECT `name`
+FROM `category` WHERE `adult_only` = true;
+
+/* Query get all items currently for sale that are appropriate for minors.
+/* Each tuple return the product name, description, item condition (new, used), item price,
+/* and shipping cost.
+/* Returns 5 rows.
+
+SELECT `id`, `name`, `description`, `item_condition`, `price`, `shipping_cost`
+FROM (SELECT *
+FROM `item` NATURAL JOIN `product_info`
+WHERE `item`.`id` NOT IN (SELECT `item_id` FROM `purchase`)) as T
+WHERE NOT EXISTS (SELECT * FROM `product_category` where T.`product_id` = `product_category`.`product_id`);
+
+/* Query return the product ids of products that belong to
+/* more than one category
+/* Return 6 rows
+
+SELECT distinct S.`product_id`
+FROM `product_category` as S, `product_category` as R
+WHERE S.`product_id` = R.`product_id` AND S.`category_name` <> R.`category_name`;
+
+
+/* Query retrieves all product ids for products that belong to the
+/* 'Computer Mouse' and 'Gaming' categories
+/* Return 1 row
+
+SELECT `product_id`
+FROM (SELECT `product_id` FROM `product_category` WHERE `category_name` = 'Computer Mouse') AS T
+WHERE T.`product_id` IN (SELECT `product_id`
+FROM `product_category` AS S WHERE S.`category_name` = 'Gaming');
+
+// Create view to shows the id, name, condition (new, used), price, and
+/* shipping cost of all items that belong to the 'Electronic' category
+/* Result: sucessfully create view
+
+create view electronics as
+SELECT S.`id`, T.`name`, S.`item_condition`, S.`price`, S.`shipping_cost`
+FROM `item` AS S NATURAL JOIN `product_info` AS T NATURAL JOIN `product_category`
+WHERE `category_name` = 'Electronics';
+
+/* Routine selection using electronics view
+/* Return 5 rows
+
+SELECT *
+FROM `electronics`;
+
+
+/* Query retrieves all purchased made within the last month
+/* Each tuple return the item id, customer id, time_purchased, and
+/* status of the purchase (processing, shipped, delivered).
+/* Return 4 rows
+
+SELECT *
+FROM `purchase`
+WHERE `time_purchased` >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH);
+
+/* Retrieves all the ids of fulfillers that have orders that are
+/* currently with a processing status
+/* Return 3 rows
+
+SELECT `fulfiller_id`
+FROM ((SELECT `business_id` FROM 
+(SELECT `item_id`
+FROM `purchase` WHERE `status` = 'processing') as S INNER JOIN `item` ON S.`item_id` = `item`.`id`) as T INNER JOIN `business` ON T.`business_id` = `business`.`id`);
+
+/* Query shows the filfiller id and time that has elapsed since an order 
+/* has been placed for the fulfiller. Order must have status of 'processing' and be over
+/* a week old.
+/* Return 1 row
+
+SELECT distinct fulfiller_id, DATEDIFF(CURDATE(), `time_purchased`) as `days since purchase`
+FROM ((SELECT `item_id`, `time_purchased`
+FROM `purchase`
+WHERE `time_purchased` < DATE_SUB(CURDATE(), INTERVAL 1 WEEK) && `status` = 'processing') as S INNER JOIN `item` as T
+ON S.`item_id` = T.`id`) INNER JOIN `business` ON T.`business_id` = `business`.`id`;
+
+/* Routine deletion of purchase for item with id = 2;
+/* Result: 1 row affected
+
+DELETE FROM `purchase`
+WHERE item_id = 2;
+
+
+/************************* Original SQL Specification *******************/
+
+// create person table
+create table person (id int auto_increment, first_name varchar(30) not null, last_name varchar(30) not null, street varchar(100) not null, city varchar(50) not null, zip varchar(5) not null, email varchar(80) not null, primary key(person_id));
+
+// create user_phone table
+create table person_phoneNumber(person_id int, phone_number varchar(12) not null, primary key(person_id, phone_number), foreign key(person_id) references person(id));
+
+// create customer table
+create table customer (id int, is_prime boolean not null, dob date not null, primary key(id), foreign key(id) references person(id)); 
+
+// create fulfiller table
+create table fulfiller (id int, membership_type enum('gold', 'silver', 'bronze') not null, primary key(id), foreign key(id) references person(id));
+
+// create review table
+create table review (id int auto_increment, customer_id int, product_id int, description varchar(300) not null, date_written datetime not null, primary key(id), foreign key(customer_id) references customer(id), foreign key(product_id) references product_info(id));
+
+// create product_info table
+create table product_info (id int auto_increment, name varchar(100) not null, description varchar(300) not null, primary key(id));
+
+// create item table
+create table item (id int, product_id int, business_id int, price numeric(10,2) not null, item_condition enum('new', 'used') not null, shipping_cost numeric(10,2) not null, primary key(id), foreign key(product_id) references product_info(id), foreign key(business_id) references business(id));
+
+// create purchased table
+create table purchase (item_id int, customer_id int, time_purchased datetime not null, primary key(item_id, customer_id), foreign key(item_id) references item(id), foreign key(customer_id) references customer(id));
+
+// create business table
+create table business (id int auto_increment, fulfiller_id int, name varchar(100) not null, street varchar(100) not null, city varchar(50) not null, state varchar(50) not null, zip varchar(5) not null, email varchar(100) not null, primary key(id, fulfiller_id), foreign key(fulfiller_id) references fulfiller(id));
+
+// create business_phone table
+create table businsess_phoneNumber(business_id int, phone_number  char(12), primary key(business_id, phone_number), foreign key(business_id) references business(id));
+
+// create category table
+create table category (name varchar(100), adult_only boolean not null, primary key(name));
+
+// create category_keywords table
+create table category_keyword (name varchar(100), keyword varchar(50), primary key(name, keyword), foreign key(name) references category(name));
+
+// create product_category table
+create table product_category (product_id int, category_name varchar(100), primary key(product_id, category_name), foreign key(product_id) references product_info(id), foreign key(category_name) references category(name));
+
+
+/********************** Changes made to original specification ******************/
+
+1. Added a unique contraint to field `email_adddress` in table `person`. I figured a person's email address could be used as an login username.
+
+2. Changed the key for the `purchase` table from (`item_id`, `customer_id`) to (`item_id`). A key of (`item_id`, `customer_id`) meant that a single item could be bought by multiple customers.
+
+3. Changed the key for the `business` table from (`id`, `fulfiller_id`) to (`id`). `id` unique identifies the "business" which is made of the company identified by the `name` field and the fulfiller identified by the `fulfiller` field. I added a unique constraint on ('fulfiller_id', `name`) to make sure that those two values identify a unique company.
+
+4. Renamed the field 'description' in table 'review' to 'score'. I also changed its datatype from enum to int. Allowing score to be an int means that queries could be make ranking products based on the scores they've recieved from users. 
