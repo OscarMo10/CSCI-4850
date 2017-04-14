@@ -30,7 +30,7 @@ mysqli_connect.php - Handles connecting to the database. The database connection
  		a. Test email trigger integrity contraint by filling email field with email without a '@'. Fill all other fields with valid values. Submit. Should see error message. Go back to 'create_account.php'.
 
 
-		b. Test phone number trigger integrity contraint by giving dob field a value not in the form '####-##-##'. Fill all other fields with valid values. Submit. Should see error message. Go back to 'create_account.php'. Note: I could not get this trigger to work. It will just successfully insert person.
+		b. Test date of birth trigger integrity contraint by giving dob field a value not in the form '####-##-##'. Fill all other fields with valid values. Submit. Should see error message. Go back to 'create_account.php'. Note: I could not get this trigger to work. It will just successfully insert person.
 
 		c. When you successfully create user. You will see a confirmation message and a link to the home page. Click the link to home page.
 
