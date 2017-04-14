@@ -86,6 +86,18 @@ INSERT INTO `purchase` (`item_id`, `customer_id`, `time_purchased`, `status`) VA
 
 INSERT INTO `review` (`id`, `customer_id`, `product_id`, `score`, `date_reviewed`) VALUES (1, 1, 100, 2, '2006-02-10 10:00:50'), (2, 3, 102, 5, '2016-05-15 12:00:20'), (3, 4, 102, 1, '2016-01-16 10:00:39'), (4, 2, 100, 5,'2016-07-10 05:20:10');
 
+
+delimiter //
+
+	CREATE TRIGGER before_insert_person_email BEFORE INSERT ON person FOR EACH ROW BEGIN IF NEW.email NOT LIKE '%@%' THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'invalid email'; END IF; END; //
+
+	delimiter $$
+
+	CREATE TRIGGER before_insert_customer_dob BEFORE INSERT ON customer FOR EACH ROW BEGIN IF NEW.dob REGEXP '[(][[:digit:]]{3}[)][[:digit:]]{3}[-][[:digit:]]{4}' THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid phone number'; END IF; END; $$
+
+	delimiter ;
+
+
 /************************ Testing Foreign Key Constraints *********************/
 
 /* Attempt to insert tuple into person with non-unique email
